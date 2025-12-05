@@ -10,7 +10,7 @@ const AboutScreen: React.FC = () => {
       <Text style={styles.value}>Henrique Custodio</Text>
 
       <Text style={styles.label}>Student ID</Text>
-      <Text style={styles.value}>101497015</Text> {/* update if needed */}
+      <Text style={styles.value}>101497015</Text> 
 
       <Text style={[styles.label, { marginTop: 16 }]}>Description</Text>
       <Text style={styles.text}>
