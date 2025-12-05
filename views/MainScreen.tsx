@@ -29,6 +29,15 @@ const MainScreen: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const handleReset = (): void => {
+    setBaseCurrency('CAD');
+    setTargetCurrency('');
+    setAmount('1');
+    setConvertedAmount(null);
+    setExchangeRate(null);
+    setErrorMessage('');
+  };
+
   const handleConvert = async (): Promise<void> => {
     setErrorMessage('');
     setConvertedAmount(null);
@@ -229,6 +238,14 @@ const MainScreen: React.FC = () => {
               )}
             </TouchableOpacity>
 
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={handleReset}
+              disabled={loading}
+            >
+              <Text style={styles.secondaryButtonText}>Reset</Text>
+            </TouchableOpacity>
+
             {renderResult()}
           </View>
 
@@ -306,6 +323,20 @@ const styles = StyleSheet.create({
     color: '#022c22',
     fontSize: 16,
     fontWeight: '700',
+  },
+  secondaryButton: {
+    marginTop: 8,
+    paddingVertical: 10,
+    borderRadius: 999,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#64748b',
+    backgroundColor: 'rgba(15,23,42,0.9)',
+  },
+  secondaryButtonText: {
+    color: '#e5e7eb',
+    fontSize: 14,
+    fontWeight: '600',
   },
   resultBox: {
     marginTop: 16,
