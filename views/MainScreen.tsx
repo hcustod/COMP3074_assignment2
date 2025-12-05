@@ -12,7 +12,7 @@ import {
 import LabeledInput from '../components/LabeledInput';
 import CurrencyChips from '../components/CurrencyChips';
 
-const FREECURRENCY_API_KEY = '';
+const FREECURRENCY_API_KEY = 'YOUR_API_KEY_HERE';
 const API_URL = 'https://api.freecurrencyapi.com/v1/latest';
 
 const CURRENCY_CODE_REGEX = /^[A-Z]{3}$/;
@@ -28,6 +28,7 @@ const MainScreen: React.FC = () => {
   const [exchangeRate, setExchangeRate] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
   const handleReset = (): void => {
     setBaseCurrency('CAD');
@@ -36,12 +37,14 @@ const MainScreen: React.FC = () => {
     setConvertedAmount(null);
     setExchangeRate(null);
     setErrorMessage('');
+    setLastUpdated(null);
   };
 
   const handleConvert = async (): Promise<void> => {
     setErrorMessage('');
     setConvertedAmount(null);
     setExchangeRate(null);
+    setLastUpdated(null);
 
     const base = baseCurrency.trim().toUpperCase();
     const target = targetCurrency.trim().toUpperCase();
@@ -116,6 +119,7 @@ const MainScreen: React.FC = () => {
       const converted = numericAmount * rate;
       setExchangeRate(rate);
       setConvertedAmount(converted);
+      setLastUpdated(new Date().toLocaleString());
     } catch (err: any) {
       console.error('Error while fetching exchange rate:', err);
       setErrorMessage('Network or unexpected error. Please try again.');
@@ -140,6 +144,9 @@ const MainScreen: React.FC = () => {
             Rate used: 1 {baseCurrency.toUpperCase()} ={' '}
             {exchangeRate.toFixed(6)} {targetCurrency.toUpperCase()}
           </Text>
+          {lastUpdated && (
+            <Text style={styles.resultTimestamp}>Last updated: {lastUpdated}</Text>
+          )}
         </View>
       );
     }
@@ -355,6 +362,11 @@ const styles = StyleSheet.create({
   resultSub: {
     fontSize: 13,
     color: '#a5b4fc',
+  },
+  resultTimestamp: {
+    marginTop: 4,
+    fontSize: 11,
+    color: '#9ca3af',
   },
   errorText: {
     marginTop: 16,
