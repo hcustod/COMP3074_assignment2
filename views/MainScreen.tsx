@@ -1,4 +1,3 @@
-// views/MainScreen.tsx
 import React, { useState } from 'react';
 import {
   View,
@@ -11,6 +10,7 @@ import {
   ScrollView,
 } from 'react-native';
 import LabeledInput from '../components/LabeledInput';
+import CurrencyChips from '../components/CurrencyChips';
 
 const FREECURRENCY_API_KEY = '';
 const API_URL = 'https://api.freecurrencyapi.com/v1/latest';
@@ -138,7 +138,6 @@ const MainScreen: React.FC = () => {
     return null;
   };
 
-  // Simple mapping from the global error to per-field messages
   const baseError =
     errorMessage.includes('Base currency') || errorMessage.includes('same')
       ? errorMessage
@@ -184,6 +183,12 @@ const MainScreen: React.FC = () => {
               error={baseError}
             />
 
+            <CurrencyChips
+              label="Quick select"
+              currencies={['CAD', 'USD', 'EUR', 'GBP']}
+              onSelect={code => setBaseCurrency(code)}
+            />
+
             <LabeledInput
               label="Destination Currency (e.g., USD)"
               value={targetCurrency}
@@ -194,6 +199,12 @@ const MainScreen: React.FC = () => {
               placeholder="USD"
               required
               error={targetError}
+            />
+
+            <CurrencyChips
+              label="Quick select"
+              currencies={['USD', 'CAD', 'EUR', 'GBP']}
+              onSelect={code => setTargetCurrency(code)}
             />
 
             <LabeledInput
@@ -233,7 +244,7 @@ const MainScreen: React.FC = () => {
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
-    backgroundColor: '#0f172a', // dark slate
+    backgroundColor: '#0f172a',
   },
   scrollContent: {
     flexGrow: 1,
