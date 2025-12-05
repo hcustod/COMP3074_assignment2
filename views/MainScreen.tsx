@@ -1,15 +1,16 @@
+// views/MainScreen.tsx
 import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
 } from 'react-native';
+import LabeledInput from '../components/LabeledInput';
 
 const FREECURRENCY_API_KEY = '';
 const API_URL = 'https://api.freecurrencyapi.com/v1/latest';
@@ -29,7 +30,6 @@ const MainScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const handleConvert = async (): Promise<void> => {
-    // reset previous output
     setErrorMessage('');
     setConvertedAmount(null);
     setExchangeRate(null);
@@ -38,7 +38,6 @@ const MainScreen: React.FC = () => {
     const target = targetCurrency.trim().toUpperCase();
     const amt = amount.trim();
 
-    // validation
     if (!isValidCurrencyCode(base)) {
       setErrorMessage(
         'Base currency must be a 3-letter uppercase ISO code (e.g., CAD, USD, EUR).'
@@ -139,6 +138,17 @@ const MainScreen: React.FC = () => {
     return null;
   };
 
+  // Simple mapping from the global error to per-field messages
+  const baseError =
+    errorMessage.includes('Base currency') || errorMessage.includes('same')
+      ? errorMessage
+      : undefined;
+  const targetError =
+    errorMessage.includes('Destination currency') || errorMessage.includes('same')
+      ? errorMessage
+      : undefined;
+  const amountError = errorMessage.includes('Amount must') ? errorMessage : undefined;
+
   return (
     <KeyboardAvoidingView
       style={styles.flex}
@@ -148,81 +158,72 @@ const MainScreen: React.FC = () => {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.container}>
-          <Text style={styles.title}>CurrenC</Text>
-          <Text style={styles.subtitle}>
-            Convert from a base currency to a destination currency using live
-            exchange rates.
+        <View style={styles.screen}>
+          <Text style={styles.appTitle}>CurrenC</Text>
+          <Text style={styles.appSubtitle}>
+            Live currency conversion with input validation and error handling.
           </Text>
 
-          <Text style={styles.helperText}>
-            Enter 3-letter codes (e.g., CAD, USD, EUR). Amount must be a
-            positive number.
-          </Text>
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Currency Conversion</Text>
 
-          {/* Base currency */}
-          <View style={styles.fieldGroup}>
-            <Text style={styles.label}>Base Currency (e.g., CAD)</Text>
-            <TextInput
-              style={styles.input}
+            <Text style={styles.helperText}>
+              Enter 3-letter codes (e.g., CAD, USD, EUR). Amount must be a positive
+              number.
+            </Text>
+
+            <LabeledInput
+              label="Base Currency (e.g., CAD)"
               value={baseCurrency}
-              onChangeText={setBaseCurrency}
+              onChangeText={text => setBaseCurrency(text.toUpperCase())}
               autoCapitalize="characters"
               autoCorrect={false}
               maxLength={3}
               placeholder="CAD"
-              placeholderTextColor="#9ca3af"
+              required
+              error={baseError}
             />
-          </View>
 
-          {/* Destination currency */}
-          <View style={styles.fieldGroup}>
-            <Text style={styles.label}>Destination Currency (e.g., USD)</Text>
-            <TextInput
-              style={styles.input}
+            <LabeledInput
+              label="Destination Currency (e.g., USD)"
               value={targetCurrency}
-              onChangeText={setTargetCurrency}
+              onChangeText={text => setTargetCurrency(text.toUpperCase())}
               autoCapitalize="characters"
               autoCorrect={false}
               maxLength={3}
               placeholder="USD"
-              placeholderTextColor="#9ca3af"
+              required
+              error={targetError}
             />
-          </View>
 
-          {/* Amount */}
-          <View style={styles.fieldGroup}>
-            <Text style={styles.label}>Amount</Text>
-            <TextInput
-              style={styles.input}
+            <LabeledInput
+              label="Amount"
               value={amount}
               onChangeText={setAmount}
               keyboardType="numeric"
               placeholder="1"
-              placeholderTextColor="#9ca3af"
+              required
+              error={amountError}
             />
+
+            <TouchableOpacity
+              style={[styles.button, loading && styles.buttonDisabled]}
+              onPress={handleConvert}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#ffffff" />
+              ) : (
+                <Text style={styles.buttonText}>Convert</Text>
+              )}
+            </TouchableOpacity>
+
+            {renderResult()}
           </View>
 
-          {/* Convert button */}
-          <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleConvert}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#ffffff" />
-            ) : (
-              <Text style={styles.buttonText}>Convert</Text>
-            )}
-          </TouchableOpacity>
-
-          {renderResult()}
-
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>
-              Built by Henrique Custodio · COMP3074
-            </Text>
-          </View>
+          <Text style={styles.footer}>
+            Built by Henrique Custodio · COMP3074 Assignment 2
+          </Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -232,27 +233,47 @@ const MainScreen: React.FC = () => {
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
+    backgroundColor: '#0f172a', // dark slate
   },
   scrollContent: {
     flexGrow: 1,
   },
-  container: {
+  screen: {
     flexGrow: 1,
     padding: 16,
-    backgroundColor: '#ffffff',
     justifyContent: 'center',
   },
-  title: {
-    fontSize: 28,
+  appTitle: {
+    fontSize: 30,
     fontWeight: '800',
-    marginBottom: 4,
     textAlign: 'center',
+    color: '#e5e7eb',
+    marginBottom: 4,
   },
-  subtitle: {
+  appSubtitle: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#4b5563',
+    color: '#9ca3af',
     marginBottom: 16,
+  },
+  card: {
+    borderRadius: 20,
+    padding: 16,
+    backgroundColor: 'rgba(15,23,42,0.96)',
+    shadowColor: '#22d3ee',
+    shadowOpacity: 0.35,
+    shadowRadius: 22,
+    shadowOffset: { width: 0, height: 12 },
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(148,163,184,0.35)',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#e5e7eb',
+    marginBottom: 8,
+    textAlign: 'center',
   },
   helperText: {
     fontSize: 12,
@@ -260,26 +281,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 16,
   },
-  fieldGroup: {
-    marginBottom: 12,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  input: {
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 14,
-    color: '#111827',
-  },
   button: {
-    marginTop: 12,
-    backgroundColor: '#2563eb',
+    marginTop: 8,
+    backgroundColor: '#22c55e',
     paddingVertical: 12,
     borderRadius: 999,
     alignItems: 'center',
@@ -288,7 +292,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   buttonText: {
-    color: '#ffffff',
+    color: '#022c22',
     fontSize: 16,
     fontWeight: '700',
   },
@@ -296,29 +300,30 @@ const styles = StyleSheet.create({
     marginTop: 16,
     padding: 12,
     borderRadius: 12,
-    backgroundColor: '#eff6ff',
+    backgroundColor: 'rgba(15,118,110,0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(45,212,191,0.5)',
   },
   resultMain: {
     fontSize: 16,
     fontWeight: '700',
+    color: '#e5e7eb',
     marginBottom: 4,
   },
   resultSub: {
     fontSize: 13,
-    color: '#4b5563',
+    color: '#a5b4fc',
   },
   errorText: {
     marginTop: 16,
-    color: '#b91c1c',
+    color: '#fecaca',
     fontSize: 13,
   },
   footer: {
-    marginTop: 24,
-    alignItems: 'center',
-  },
-  footerText: {
-    fontSize: 11,
-    color: '#6b7280',
+    marginTop: 20,
+    textAlign: 'center',
+    color: '#9ca3af',
+    fontSize: 12,
   },
 });
 
