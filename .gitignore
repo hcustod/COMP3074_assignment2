@@ -1,0 +1,181 @@
+# ============================================================
+# CORE NODE / REACT-NATIVE IGNORE
+# ============================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+dist/
+build/
+.expo/
+.expo-shared/
+.expo-packager/
+.expo-generate/
+.expo-bundle/
+
+# Metro / React Native cache
+.bundle/
+.expo/
+.expo-shared/
+.npm/
+.tmp/
+temp/
+tmp/
+
+# Babel
+babel.config.js
+.babelrc
+.babelrc.js
+.cache/
+metro.config.js
+
+# TypeScript
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Jest
+coverage/
+jest.cache/
+jest/
+
+# ============================================================
+# ANDROID BUILD IGNORE
+# ============================================================
+# Gradle
+**/android/.gradle/
+**/android/.idea/
+**/android/local.properties
+**/android/gradle/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/gradle-wrapper.jar
+**/android/gradle-wrapper.properties
+
+# Android Studio / IntelliJ
+*.iml
+*.iws
+*.ipr
+.idea/
+.idea/*
+
+# Android build outputs
+**/android/app/build/
+**/android/build/
+**/android/app/outputs/
+**/android/app/intermediates/
+**/android/app/release/
+**/android/app/debug/
+**/android/app/profile/
+
+# AAB + APK packages
+*.apk
+*.aab
+*.ap_
+
+
+# Native Build (C++ / NDK)
+**/android/app/.cxx/
+**/android/.cxx/
+**/android/app/intermediates/cxx/
+
+# Native intermediate libs that caused your GitHub problem
+**/android/app/build/intermediates/**/*.so
+
+# ============================================================
+# iOS IGNORE
+# ============================================================
+# Xcode
+**/ios/build/
+**/ios/DerivedData/
+**/ios/*.pbxuser
+**/ios/*.mode1v3
+**/ios/*.mode2v3
+**/ios/*.perspectivev3
+**/ios/*.xcworkspace
+**/ios/*.xcuserstate
+**/ios/*.xcshareddata
+**/ios/Pods/
+**/ios/.xcode.env.local
+**/ios/.xcode.env*
+
+# CocoaPods
+**/ios/Podfile.lock
+**/ios/Pods/
+
+# Ruby environment
+.rbconfig
+.ruby-version
+.bundle/
+vendor/bundle/
+Gemfile.lock
+
+# ============================================================
+# LOGS / TEMP / OS JUNK
+# ============================================================
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*.orig
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ============================================================
+# JETBRAINS / VSCODE
+# ============================================================
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# ============================================================
+# ENVIRONMENT / SECRETS
+# ============================================================
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+*.key
+*.pem
+*.p12
+
+# ============================================================
+# PROJECT-SPECIFIC IGNORE FOR YOUR ASSIGNMENT
+# ============================================================
+
+# Ignore everything inside android build for your project folder
+A2_Henrique_Custodio/A2HenriqueCustodio/android/.gradle/
+A2_Henrique_Custodio/A2HenriqueCustodio/android/app/build/
+A2_Henrique_Custodio/A2HenriqueCustodio/android/build/
+A2_Henrique_Custodio/A2HenriqueCustodio/android/local.properties
+A2_Henrique_Custodio/A2HenriqueCustodio/ios/Pods/
+A2_Henrique_Custodio/A2HenriqueCustodio/ios/build/
+
+# Ensure no APK or native libs EVER enter git again
+A2_Henrique_Custodio/A2HenriqueCustodio/**/*.apk
+A2_Henrique_Custodio/A2HenriqueCustodio/**/*.aab
+A2_Henrique_Custodio/A2HenriqueCustodio/**/*.so
+
+# ============================================================
+# END
+# ============================================================
+
