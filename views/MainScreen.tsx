@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import LabeledInput from '../components/LabeledInput';
 import CurrencyChips from '../components/CurrencyChips';
-import { API_KEY, API_BASE_URL } from '../config';
+import { API_BASE_URL } from '../config';
 
 const CURRENCY_CODE_REGEX = /^[A-Z]{3}$/;
 
@@ -91,7 +91,8 @@ const MainScreen: React.FC = () => {
       return;
     }
 
-    if (!API_KEY) {
+    // Minimal key check: base URL must already contain apikey=
+    if (!API_BASE_URL.includes('apikey=')) {
       setErrorMessage('API key is missing. Please configure FreeCurrencyAPI key.');
       return;
     }
@@ -100,8 +101,7 @@ const MainScreen: React.FC = () => {
 
     try {
       const url =
-        `${API_BASE_URL}?apikey=${encodeURIComponent(API_KEY)}` +
-        `&base_currency=${encodeURIComponent(base)}` +
+        `${API_BASE_URL}&base_currency=${encodeURIComponent(base)}` +
         `&currencies=${encodeURIComponent(target)}`;
 
       const response = await fetch(url);

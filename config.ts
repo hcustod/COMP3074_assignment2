@@ -1,2 +1,1 @@
-export const API_KEY = "fca_live_dcdpFO06QfOIw9CavgySwMipBQo3MIasDrHgYzla";
 export const API_BASE_URL = "https://api.freecurrencyapi.com/v1/latest?apikey=fca_live_dcdpFO06QfOIw9CavgySwMipBQo3MIasDrHgYzla";
