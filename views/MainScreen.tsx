@@ -31,6 +31,7 @@ const MainScreen: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [conversionCount, setConversionCount] = useState(0);
 
   const handleReset = (): void => {
     setBaseCurrency('CAD');
@@ -40,6 +41,7 @@ const MainScreen: React.FC = () => {
     setExchangeRate(null);
     setErrorMessage('');
     setLastUpdated(null);
+    setConversionCount(0);
   };
 
   const handleSwap = (): void => {
@@ -137,6 +139,7 @@ const MainScreen: React.FC = () => {
       setExchangeRate(rate);
       setConvertedAmount(converted);
       setLastUpdated(new Date().toLocaleString());
+      setConversionCount(prev => prev + 1);
     } catch (err: any) {
       console.error('Error while fetching exchange rate:', err);
       setErrorMessage('Network or unexpected error. Please try again.');
@@ -163,6 +166,11 @@ const MainScreen: React.FC = () => {
           </Text>
           {lastUpdated && (
             <Text style={styles.resultTimestamp}>Last updated: {lastUpdated}</Text>
+          )}
+          {conversionCount > 0 && (
+            <Text style={styles.resultCount}>
+              Conversions this session: {conversionCount}
+            </Text>
           )}
         </View>
       );
@@ -413,6 +421,11 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 11,
     color: '#9ca3af',
+  },
+  resultCount: {
+    marginTop: 4,
+    fontSize: 11,
+    color: '#c4b5fd',
   },
   errorText: {
     marginTop: 16,
