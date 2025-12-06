@@ -14,7 +14,7 @@ React Native Android app for currency conversion.
     - Error handling for invalid input, API key issues, and network failures
     - Optional features:
       - Loading indicator
-      - Disabled Convert button while fetching
+      - Disabled Convert button while fetchingg
       - Reusable components (`LabeledInput`, `CurrencyChips`)
       - Modern dark UI with card + glow effect
   - **AboutScreen** – Shows:

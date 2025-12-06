@@ -13,12 +13,11 @@ import {
 } from 'react-native';
 import LabeledInput from '../components/LabeledInput';
 import CurrencyChips from '../components/CurrencyChips';
-import { API_BASE_URL } from '../config';
-
-const CURRENCY_CODE_REGEX = /^[A-Z]{3}$/;
-
-const isValidCurrencyCode = (code: string): boolean =>
-  CURRENCY_CODE_REGEX.test(code);
+import {
+  validateConversionInput,
+  convertCurrencyViaApi,
+} from '../services/currencyService';
+import ResultSummary from '../components/ResultSummary';
 
 const MainScreen: React.FC = () => {
   const [baseCurrency, setBaseCurrency] = useState('CAD');
@@ -60,112 +59,34 @@ const MainScreen: React.FC = () => {
     setExchangeRate(null);
     setLastUpdated(null);
 
-    const base = baseCurrency.trim().toUpperCase();
-    const target = targetCurrency.trim().toUpperCase();
-    const amt = amount.trim();
+    const validation = validateConversionInput(
+      baseCurrency,
+      targetCurrency,
+      amount
+    );
 
-    if (!isValidCurrencyCode(base)) {
-      setErrorMessage(
-        'Base currency must be a 3-letter uppercase ISO code (e.g., CAD, USD, EUR).'
-      );
+    if (!validation.ok) {
+      setErrorMessage(validation.errorMessage);
       return;
     }
 
-    if (!isValidCurrencyCode(target)) {
-      setErrorMessage(
-        'Destination currency must be a 3-letter uppercase ISO code (e.g., CAD, USD, EUR).'
-      );
-      return;
-    }
-
-    if (base === target) {
-      setErrorMessage('Base and destination currencies cannot be the same.');
-      return;
-    }
-
-    const numericAmount = Number(amt);
-    if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
-      setErrorMessage('Amount must be a positive number.');
-      return;
-    }
-
-    if (!API_BASE_URL.includes('apikey=')) {
-      setErrorMessage('API key is missing. Please configure FreeCurrencyAPI key.');
-      return;
-    }
+    const { base, target, amount: numericAmount } = validation;
 
     setLoading(true);
 
     try {
-      const url =
-        `${API_BASE_URL}&base_currency=${encodeURIComponent(base)}` +
-        `&currencies=${encodeURIComponent(target)}`;
-
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        if (response.status === 401 || response.status === 403) {
-          setErrorMessage('Invalid or unauthorized API key.');
-        } else if (response.status === 429) {
-          setErrorMessage('Rate limit exceeded. Please try again later.');
-        } else {
-          setErrorMessage(`API error: ${response.status}`);
-        }
-        return;
-      }
-
-      const json = (await response.json()) as any;
-
-      if (!json || !json.data || json.data[target] == null) {
-        setErrorMessage(
-          'Could not find exchange rate for the specified currencies.'
-        );
-        return;
-      }
-
-      const rate = Number(json.data[target]);
-      if (!Number.isFinite(rate) || rate <= 0) {
-        setErrorMessage('Received an invalid exchange rate from the API.');
-        return;
-      }
-
-      const numericAmountSafe = Number(amt);
-      const converted = numericAmountSafe * rate;
-      setExchangeRate(rate);
-      setConvertedAmount(converted);
-      setLastUpdated(new Date().toLocaleString());
+      const result = await convertCurrencyViaApi(base, target, numericAmount);
+      setExchangeRate(result.rate);
+      setConvertedAmount(result.converted);
+      setLastUpdated(result.lastUpdated);
     } catch (err: any) {
       console.error('Error while fetching exchange rate:', err);
-      setErrorMessage('Network or unexpected error. Please try again.');
+      setErrorMessage(
+        err?.message || 'Network or unexpected error. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
-  };
-
-  const renderResult = () => {
-    if (errorMessage) {
-      return <Text style={styles.errorText}>{errorMessage}</Text>;
-    }
-
-    if (convertedAmount != null && exchangeRate != null) {
-      return (
-        <View style={styles.resultBox}>
-          <Text style={styles.resultMain}>
-            {amount || '1'} {baseCurrency.toUpperCase()} ={' '}
-            {convertedAmount.toFixed(2)} {targetCurrency.toUpperCase()}
-          </Text>
-          <Text style={styles.resultSub}>
-            Rate used: 1 {baseCurrency.toUpperCase()} ={' '}
-            {exchangeRate.toFixed(6)} {targetCurrency.toUpperCase()}
-          </Text>
-          {lastUpdated && (
-            <Text style={styles.resultTimestamp}>Last updated: {lastUpdated}</Text>
-          )}
-        </View>
-      );
-    }
-
-    return null;
   };
 
   const baseError =
@@ -176,7 +97,9 @@ const MainScreen: React.FC = () => {
     errorMessage.includes('Destination currency') || errorMessage.includes('same')
       ? errorMessage
       : undefined;
-  const amountError = errorMessage.includes('Amount must') ? errorMessage : undefined;
+  const amountError = errorMessage.includes('Amount must')
+    ? errorMessage
+    : undefined;
 
   return (
     <KeyboardAvoidingView
@@ -191,7 +114,7 @@ const MainScreen: React.FC = () => {
           <View style={styles.screen}>
             <Text style={styles.appTitle}>CurrenC</Text>
             <Text style={styles.appSubtitle}>
-              Currency conversion with live rates!.
+              Currency conversion with live rates!
             </Text>
 
             <View style={styles.card}>
@@ -278,7 +201,15 @@ const MainScreen: React.FC = () => {
                 <Text style={styles.secondaryButtonText}>Reset</Text>
               </TouchableOpacity>
 
-              {renderResult()}
+              <ResultSummary
+                errorMessage={errorMessage}
+                convertedAmount={convertedAmount}
+                exchangeRate={exchangeRate}
+                lastUpdated={lastUpdated}
+                amount={amount}
+                baseCurrency={baseCurrency}
+                targetCurrency={targetCurrency}
+              />
             </View>
 
             <Text style={styles.footer}>
@@ -389,35 +320,6 @@ const styles = StyleSheet.create({
     color: '#e5e7eb',
     fontSize: 12,
     fontWeight: '600',
-  },
-  resultBox: {
-    marginTop: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderRadius: 12,
-    backgroundColor: 'rgba(15,118,110,0.15)',
-    borderWidth: 1,
-    borderColor: 'rgba(45,212,191,0.5)',
-  },
-  resultMain: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#e5e7eb',
-    marginBottom: 3,
-  },
-  resultSub: {
-    fontSize: 12,
-    color: '#a5b4fc',
-  },
-  resultTimestamp: {
-    marginTop: 3,
-    fontSize: 11,
-    color: '#9ca3af',
-  },
-  errorText: {
-    marginTop: 10,
-    color: '#fecaca',
-    fontSize: 13,
   },
   footer: {
     marginTop: 12,
