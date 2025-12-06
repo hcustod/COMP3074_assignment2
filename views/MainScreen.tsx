@@ -14,7 +14,7 @@ import {
 import LabeledInput from '../components/LabeledInput';
 import CurrencyChips from '../components/CurrencyChips';
 
-const FREECURRENCY_API_KEY = 'YOUR_API_KEY_HERE';
+const FREECURRENCY_API_KEY = '';
 const API_URL = 'https://api.freecurrencyapi.com/v1/latest';
 
 const CURRENCY_CODE_REGEX = /^[A-Z]{3}$/;
@@ -202,8 +202,23 @@ const MainScreen: React.FC = () => {
           <View style={styles.screen}>
             <Text style={styles.appTitle}>CurrenC</Text>
             <Text style={styles.appSubtitle}>
-              Live currency conversion with input validation and error handling.
+              Live currency conversion with validation and clear error messages.
             </Text>
+
+            <View style={styles.pillRow}>
+              <View style={styles.pill}>
+                <Text style={styles.pillText}>
+                  {baseCurrency.toUpperCase()} →{' '}
+                  {targetCurrency ? targetCurrency.toUpperCase() : '---'}
+                </Text>
+              </View>
+              {conversionCount > 0 && (
+                <Text style={styles.pillCounter}>
+                  {conversionCount} conversion
+                  {conversionCount === 1 ? '' : 's'} this session
+                </Text>
+              )}
+            </View>
 
             <View style={styles.card}>
               <Text style={styles.sectionTitle}>Currency Conversion</Text>
@@ -305,7 +320,7 @@ const MainScreen: React.FC = () => {
 const styles = StyleSheet.create({
   flex: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#020617',
   },
   scrollContent: {
     flexGrow: 1,
@@ -326,11 +341,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     color: '#9ca3af',
+    marginBottom: 8,
+  },
+  pillRow: {
+    alignItems: 'center',
     marginBottom: 16,
+    gap: 4,
+  },
+  pill: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: 'rgba(15,23,42,0.9)',
+    borderWidth: 1,
+    borderColor: 'rgba(148,163,184,0.6)',
+  },
+  pillText: {
+    color: '#e5e7eb',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  pillCounter: {
+    fontSize: 11,
+    color: '#a5b4fc',
   },
   card: {
     borderRadius: 20,
-    padding: 16,
+    padding: 18,
     backgroundColor: 'rgba(15,23,42,0.96)',
     shadowColor: '#22d3ee',
     shadowOpacity: 0.35,
@@ -384,7 +421,8 @@ const styles = StyleSheet.create({
   },
   swapRow: {
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 4,
+    marginTop: 4,
   },
   swapButton: {
     paddingHorizontal: 12,
