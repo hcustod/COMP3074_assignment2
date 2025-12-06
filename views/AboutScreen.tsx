@@ -1,3 +1,4 @@
+// views/AboutScreen.tsx
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
@@ -10,7 +11,7 @@ const AboutScreen: React.FC = () => {
       >
         <Text style={styles.appTitle}>About CurrenC</Text>
         <Text style={styles.appSubtitle}>
-          A minimal but modern currency converter built for COMP3074.
+          Simple, focused currency conversion for COMP3074.
         </Text>
 
         <View style={styles.card}>
@@ -28,32 +29,31 @@ const AboutScreen: React.FC = () => {
 
           <View style={styles.divider} />
 
-          <Text style={styles.sectionHeading}>What this app does</Text>
+          <Text style={styles.sectionHeading}>What CurrenC does</Text>
           <Text style={styles.paragraph}>
-            CurrenC converts an amount from a base currency (e.g., CAD) to a
-            destination currency (e.g., USD) using live exchange rates from the
-            FreeCurrencyAPI service.
+            CurrenC converts an amount from a base currency (for example CAD) to
+            a destination currency (for example USD) using live exchange rates
+            from the FreeCurrencyAPI service.
           </Text>
           <Text style={styles.paragraph}>
             The app validates that currency codes are 3-letter uppercase ISO
-            codes and ensures that the amount is a positive number. If the API
-            call succeeds, it displays both the converted amount and the
-            exchange rate used.
+            codes and ensures that the amount entered is a positive number.
+            When the API call succeeds, it shows both the converted amount and
+            the exchange rate used.
           </Text>
 
           <Text style={styles.sectionHeading}>Error handling</Text>
           <Text style={styles.paragraph}>
-            The app displays meaningful error messages for invalid input,
-            missing or invalid API keys, missing currency data, and general
-            network problems.
+            If something goes wrong, CurrenC displays meaningful error messages,
+            including invalid input, invalid or missing API key, missing
+            currency data, and general network problems.
           </Text>
 
           <Text style={styles.sectionHeading}>Technologies used</Text>
           <Text style={styles.paragraph}>
-            • React Native{' '}
-            {'\n'}
+            • React Native{'\n'}
             • React Navigation (stack navigation){'\n'}
-            • TypeScript for type safety{'\n'}
+            • TypeScript{'\n'}
             • FreeCurrencyAPI for exchange rates
           </Text>
         </View>
@@ -87,14 +87,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#9ca3af',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 18,
   },
   card: {
+    alignSelf: 'stretch',
     borderRadius: 20,
     padding: 18,
     backgroundColor: 'rgba(15,23,42,0.98)',
     shadowColor: '#22d3ee',
-    shadowOpacity: 0.28,
+    shadowOpacity: 0.25,
     shadowRadius: 20,
     shadowOffset: { width: 0, height: 10 },
     elevation: 8,
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: 'rgba(148,163,184,0.4)',
+    backgroundColor: 'rgba(148,163,184,0.5)',
     marginVertical: 14,
   },
   footer: {

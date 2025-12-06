@@ -1,40 +1,38 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, TextInputProps } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TextInputProps,
+} from 'react-native';
 
-type LabeledInputProps = {
+type LabeledInputProps = TextInputProps & {
   label: string;
-  value: string;
-  onChangeText: (text: string) => void;
-  required?: boolean;
   error?: string;
-} & TextInputProps;
+  required?: boolean;
+};
 
 const LabeledInput: React.FC<LabeledInputProps> = ({
   label,
-  value,
-  onChangeText,
-  required = false,
   error,
-  ...textInputProps
+  required,
+  ...inputProps
 }) => {
+  const hasError = !!error;
+
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>
-        {label}
-        {required && <Text style={styles.required}> *</Text>}
-      </Text>
-
-      <View style={styles.inputWrapper}>
-        <TextInput
-          style={[styles.input, !!error && styles.inputError]}
-          value={value}
-          onChangeText={onChangeText}
-          placeholderTextColor="#9ca3af"
-          {...textInputProps}
-        />
+      <View style={styles.labelRow}>
+        <Text style={styles.label}>{label}</Text>
+        {required && <Text style={styles.required}>*</Text>}
       </View>
-
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      <TextInput
+        style={[styles.input, hasError && styles.inputError]}
+        placeholderTextColor="#6b7280"
+        {...inputProps}
+      />
+      {hasError && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 };
@@ -43,35 +41,38 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 12,
   },
-  label: {
-    fontSize: 13,
-    fontWeight: '600',
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 4,
-    color: '#111827',
+  },
+  label: {
+    fontSize: 12,
+    color: '#e5e7eb',
+    fontWeight: '600',
   },
   required: {
-    color: '#ef4444',
-  },
-  inputWrapper: {
-    borderRadius: 999,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#d1d5db',
+    marginLeft: 4,
+    color: '#f97316',
+    fontSize: 12,
   },
   input: {
-    paddingHorizontal: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(148,163,184,0.7)',
+    paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
-    color: '#111827',
-    backgroundColor: '#f9fafb',
+    color: '#e5e7eb',
+    backgroundColor: 'rgba(15,23,42,0.9)',
   },
   inputError: {
-    borderColor: '#ef4444',
+    borderColor: '#f97373',
   },
   errorText: {
     marginTop: 4,
-    fontSize: 12,
-    color: '#b91c1c',
+    fontSize: 11,
+    color: '#fecaca',
   },
 });
 
