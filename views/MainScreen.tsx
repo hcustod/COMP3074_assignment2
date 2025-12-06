@@ -8,6 +8,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import LabeledInput from '../components/LabeledInput';
 import CurrencyChips from '../components/CurrencyChips';
@@ -184,108 +186,110 @@ const MainScreen: React.FC = () => {
       style={styles.flex}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={styles.screen}>
-          <Text style={styles.appTitle}>CurrenC</Text>
-          <Text style={styles.appSubtitle}>
-            Live currency conversion with input validation and error handling.
-          </Text>
-
-          <View style={styles.card}>
-            <Text style={styles.sectionTitle}>Currency Conversion</Text>
-
-            <Text style={styles.helperText}>
-              Enter 3-letter codes (e.g., CAD, USD, EUR). Amount must be a positive
-              number.
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.screen}>
+            <Text style={styles.appTitle}>CurrenC</Text>
+            <Text style={styles.appSubtitle}>
+              Live currency conversion with input validation and error handling.
             </Text>
 
-            <LabeledInput
-              label="Base Currency (e.g., CAD)"
-              value={baseCurrency}
-              onChangeText={text => setBaseCurrency(text.toUpperCase())}
-              autoCapitalize="characters"
-              autoCorrect={false}
-              maxLength={3}
-              placeholder="CAD"
-              required
-              error={baseError}
-            />
+            <View style={styles.card}>
+              <Text style={styles.sectionTitle}>Currency Conversion</Text>
 
-            <CurrencyChips
-              label="Quick select"
-              currencies={['CAD', 'USD', 'EUR', 'GBP']}
-              onSelect={code => setBaseCurrency(code)}
-            />
+              <Text style={styles.helperText}>
+                Enter 3-letter codes (e.g., CAD, USD, EUR). Amount must be a positive
+                number.
+              </Text>
 
-            <LabeledInput
-              label="Destination Currency (e.g., USD)"
-              value={targetCurrency}
-              onChangeText={text => setTargetCurrency(text.toUpperCase())}
-              autoCapitalize="characters"
-              autoCorrect={false}
-              maxLength={3}
-              placeholder="USD"
-              required
-              error={targetError}
-            />
+              <LabeledInput
+                label="Base Currency (e.g., CAD)"
+                value={baseCurrency}
+                onChangeText={text => setBaseCurrency(text.toUpperCase())}
+                autoCapitalize="characters"
+                autoCorrect={false}
+                maxLength={3}
+                placeholder="CAD"
+                required
+                error={baseError}
+              />
 
-            <CurrencyChips
-              label="Quick select"
-              currencies={['USD', 'CAD', 'EUR', 'GBP']}
-              onSelect={code => setTargetCurrency(code)}
-            />
+              <CurrencyChips
+                label="Quick select"
+                currencies={['CAD', 'USD', 'EUR', 'GBP']}
+                onSelect={code => setBaseCurrency(code)}
+              />
 
-            <View style={styles.swapRow}>
+              <LabeledInput
+                label="Destination Currency (e.g., USD)"
+                value={targetCurrency}
+                onChangeText={text => setTargetCurrency(text.toUpperCase())}
+                autoCapitalize="characters"
+                autoCorrect={false}
+                maxLength={3}
+                placeholder="USD"
+                required
+                error={targetError}
+              />
+
+              <CurrencyChips
+                label="Quick select"
+                currencies={['USD', 'CAD', 'EUR', 'GBP']}
+                onSelect={code => setTargetCurrency(code)}
+              />
+
+              <View style={styles.swapRow}>
+                <TouchableOpacity
+                  style={styles.swapButton}
+                  onPress={handleSwap}
+                  disabled={!baseCurrency || !targetCurrency}
+                >
+                  <Text style={styles.swapButtonText}>Swap Currencies</Text>
+                </TouchableOpacity>
+              </View>
+
+              <LabeledInput
+                label="Amount"
+                value={amount}
+                onChangeText={setAmount}
+                keyboardType="numeric"
+                placeholder="1"
+                required
+                error={amountError}
+              />
+
               <TouchableOpacity
-                style={styles.swapButton}
-                onPress={handleSwap}
-                disabled={!baseCurrency || !targetCurrency}
+                style={[styles.button, loading && styles.buttonDisabled]}
+                onPress={handleConvert}
+                disabled={loading}
               >
-                <Text style={styles.swapButtonText}>Swap Currencies</Text>
+                {loading ? (
+                  <ActivityIndicator color="#ffffff" />
+                ) : (
+                  <Text style={styles.buttonText}>Convert</Text>
+                )}
               </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={handleReset}
+                disabled={loading}
+              >
+                <Text style={styles.secondaryButtonText}>Reset</Text>
+              </TouchableOpacity>
+
+              {renderResult()}
             </View>
 
-            <LabeledInput
-              label="Amount"
-              value={amount}
-              onChangeText={setAmount}
-              keyboardType="numeric"
-              placeholder="1"
-              required
-              error={amountError}
-            />
-
-            <TouchableOpacity
-              style={[styles.button, loading && styles.buttonDisabled]}
-              onPress={handleConvert}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#ffffff" />
-              ) : (
-                <Text style={styles.buttonText}>Convert</Text>
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.secondaryButton}
-              onPress={handleReset}
-              disabled={loading}
-            >
-              <Text style={styles.secondaryButtonText}>Reset</Text>
-            </TouchableOpacity>
-
-            {renderResult()}
+            <Text style={styles.footer}>
+              Built by Henrique Custodio · COMP3074 Assignment 2
+            </Text>
           </View>
-
-          <Text style={styles.footer}>
-            Built by Henrique Custodio · COMP3074 Assignment 2
-          </Text>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };
