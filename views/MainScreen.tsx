@@ -40,6 +40,20 @@ const MainScreen: React.FC = () => {
     setLastUpdated(null);
   };
 
+  const handleSwap = (): void => {
+    if (!baseCurrency || !targetCurrency) {
+      return;
+    }
+    const prevBase = baseCurrency;
+    const prevTarget = targetCurrency;
+    setBaseCurrency(prevTarget.toUpperCase());
+    setTargetCurrency(prevBase.toUpperCase());
+    setConvertedAmount(null);
+    setExchangeRate(null);
+    setErrorMessage('');
+    setLastUpdated(null);
+  };
+
   const handleConvert = async (): Promise<void> => {
     setErrorMessage('');
     setConvertedAmount(null);
@@ -116,7 +130,8 @@ const MainScreen: React.FC = () => {
         return;
       }
 
-      const converted = numericAmount * rate;
+      const numericAmountSafe = Number(amt);
+      const converted = numericAmountSafe * rate;
       setExchangeRate(rate);
       setConvertedAmount(converted);
       setLastUpdated(new Date().toLocaleString());
@@ -222,6 +237,16 @@ const MainScreen: React.FC = () => {
               currencies={['USD', 'CAD', 'EUR', 'GBP']}
               onSelect={code => setTargetCurrency(code)}
             />
+
+            <View style={styles.swapRow}>
+              <TouchableOpacity
+                style={styles.swapButton}
+                onPress={handleSwap}
+                disabled={!baseCurrency || !targetCurrency}
+              >
+                <Text style={styles.swapButtonText}>Swap Currencies</Text>
+              </TouchableOpacity>
+            </View>
 
             <LabeledInput
               label="Amount"
@@ -343,6 +368,23 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     color: '#e5e7eb',
     fontSize: 14,
+    fontWeight: '600',
+  },
+  swapRow: {
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  swapButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(148,163,184,0.7)',
+    backgroundColor: 'rgba(15,23,42,0.9)',
+  },
+  swapButtonText: {
+    color: '#e5e7eb',
+    fontSize: 12,
     fontWeight: '600',
   },
   resultBox: {
