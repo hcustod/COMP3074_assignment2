@@ -10,7 +10,7 @@ const AboutScreen: React.FC = () => {
       >
         <Text style={styles.appTitle}>About CurrenC</Text>
         <Text style={styles.appSubtitle}>
-          Simple, focused currency conversion for COMP3074.
+          A Currency Converter app for COMP3074.
         </Text>
 
         <View style={styles.card}>
@@ -30,22 +30,16 @@ const AboutScreen: React.FC = () => {
 
           <Text style={styles.sectionHeading}>What CurrenC does</Text>
           <Text style={styles.paragraph}>
-            CurrenC converts an amount from a base currency (for example CAD) to
-            a destination currency (for example USD) using live exchange rates
+            CurrenC converts values from a base currency (for example CAD) to
+            a target currency (for example USD) using exchange rates
             from the FreeCurrencyAPI service.
-          </Text>
-          <Text style={styles.paragraph}>
-            The app validates that currency codes are 3-letter uppercase ISO
-            codes and ensures that the amount entered is a positive number.
-            When the API call succeeds, it shows both the converted amount and
-            the exchange rate used.
           </Text>
 
           <Text style={styles.sectionHeading}>Error handling</Text>
           <Text style={styles.paragraph}>
-            If something goes wrong, CurrenC displays meaningful error messages,
-            including invalid input, invalid or missing API key, missing
-            currency data, and general network problems.
+            If something goes wrong a related error message will be displayed.
+            (eg. Invalid input, Invalid or missing API key, Missing
+            currency data, and Network problems.)
           </Text>
 
           <Text style={styles.sectionHeading}>Technologies used</Text>
@@ -54,6 +48,7 @@ const AboutScreen: React.FC = () => {
             • React Navigation (stack navigation){'\n'}
             • TypeScript{'\n'}
             • FreeCurrencyAPI for exchange rates
+            • Android Emulator
           </Text>
         </View>
 

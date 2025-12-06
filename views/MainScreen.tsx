@@ -29,7 +29,6 @@ const MainScreen: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
-  const [conversionCount, setConversionCount] = useState(0);
 
   const handleReset = (): void => {
     setBaseCurrency('CAD');
@@ -39,7 +38,6 @@ const MainScreen: React.FC = () => {
     setExchangeRate(null);
     setErrorMessage('');
     setLastUpdated(null);
-    setConversionCount(0);
   };
 
   const handleSwap = (): void => {
@@ -91,7 +89,6 @@ const MainScreen: React.FC = () => {
       return;
     }
 
-    // Minimal key check: base URL must already contain apikey=
     if (!API_BASE_URL.includes('apikey=')) {
       setErrorMessage('API key is missing. Please configure FreeCurrencyAPI key.');
       return;
@@ -137,7 +134,6 @@ const MainScreen: React.FC = () => {
       setExchangeRate(rate);
       setConvertedAmount(converted);
       setLastUpdated(new Date().toLocaleString());
-      setConversionCount(prev => prev + 1);
     } catch (err: any) {
       console.error('Error while fetching exchange rate:', err);
       setErrorMessage('Network or unexpected error. Please try again.');
@@ -164,11 +160,6 @@ const MainScreen: React.FC = () => {
           </Text>
           {lastUpdated && (
             <Text style={styles.resultTimestamp}>Last updated: {lastUpdated}</Text>
-          )}
-          {conversionCount > 0 && (
-            <Text style={styles.resultCount}>
-              Conversions this session: {conversionCount}
-            </Text>
           )}
         </View>
       );
@@ -200,29 +191,14 @@ const MainScreen: React.FC = () => {
           <View style={styles.screen}>
             <Text style={styles.appTitle}>CurrenC</Text>
             <Text style={styles.appSubtitle}>
-              Live currency conversion with validation and clear error messages.
+              Currency conversion with live rates!.
             </Text>
-
-            <View style={styles.pillRow}>
-              <View style={styles.pill}>
-                <Text style={styles.pillText}>
-                  {baseCurrency.toUpperCase()} →{' '}
-                  {targetCurrency ? targetCurrency.toUpperCase() : '---'}
-                </Text>
-              </View>
-              {conversionCount > 0 && (
-                <Text style={styles.pillCounter}>
-                  {conversionCount} conversion
-                  {conversionCount === 1 ? '' : 's'} this session
-                </Text>
-              )}
-            </View>
 
             <View style={styles.card}>
               <Text style={styles.sectionTitle}>Currency Conversion</Text>
 
               <Text style={styles.helperText}>
-                Enter 3-letter codes (e.g., CAD, USD, EUR). Amount must be a positive
+                Enter 3-letter codes (e.g., CAD, USD, EUR). The amount must be a positive
                 number.
               </Text>
 
@@ -322,76 +298,55 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+    paddingVertical: 16,
   },
   screen: {
     flexGrow: 1,
-    padding: 16,
-    justifyContent: 'center',
+    paddingHorizontal: 16,
   },
   appTitle: {
-    fontSize: 30,
+    fontSize: 26,
     fontWeight: '800',
     textAlign: 'center',
     color: '#e5e7eb',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   appSubtitle: {
-    fontSize: 14,
+    fontSize: 13,
     textAlign: 'center',
     color: '#9ca3af',
-    marginBottom: 8,
-  },
-  pillRow: {
-    alignItems: 'center',
-    marginBottom: 16,
-    gap: 4,
-  },
-  pill: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: 'rgba(15,23,42,0.9)',
-    borderWidth: 1,
-    borderColor: 'rgba(148,163,184,0.6)',
-  },
-  pillText: {
-    color: '#e5e7eb',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  pillCounter: {
-    fontSize: 11,
-    color: '#a5b4fc',
+    marginBottom: 10,
   },
   card: {
-    borderRadius: 20,
-    padding: 18,
+    borderRadius: 18,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
     backgroundColor: 'rgba(15,23,42,0.96)',
     shadowColor: '#22d3ee',
-    shadowOpacity: 0.35,
-    shadowRadius: 22,
-    shadowOffset: { width: 0, height: 12 },
-    elevation: 10,
+    shadowOpacity: 0.25,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 8,
     borderWidth: 1,
     borderColor: 'rgba(148,163,184,0.35)',
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
     color: '#e5e7eb',
-    marginBottom: 8,
+    marginBottom: 6,
     textAlign: 'center',
   },
   helperText: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#9ca3af',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 10,
   },
   button: {
     marginTop: 8,
     backgroundColor: '#22c55e',
-    paddingVertical: 12,
+    paddingVertical: 11,
     borderRadius: 999,
     alignItems: 'center',
   },
@@ -400,12 +355,12 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#022c22',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
   },
   secondaryButton: {
-    marginTop: 8,
-    paddingVertical: 10,
+    marginTop: 6,
+    paddingVertical: 9,
     borderRadius: 999,
     alignItems: 'center',
     borderWidth: 1,
@@ -423,8 +378,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   swapButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: 999,
     borderWidth: 1,
     borderColor: 'rgba(148,163,184,0.7)',
@@ -436,43 +391,39 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   resultBox: {
-    marginTop: 16,
-    padding: 12,
+    marginTop: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
     borderRadius: 12,
     backgroundColor: 'rgba(15,118,110,0.15)',
     borderWidth: 1,
     borderColor: 'rgba(45,212,191,0.5)',
   },
   resultMain: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
     color: '#e5e7eb',
-    marginBottom: 4,
+    marginBottom: 3,
   },
   resultSub: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#a5b4fc',
   },
   resultTimestamp: {
-    marginTop: 4,
+    marginTop: 3,
     fontSize: 11,
     color: '#9ca3af',
   },
-  resultCount: {
-    marginTop: 4,
-    fontSize: 11,
-    color: '#c4b5fd',
-  },
   errorText: {
-    marginTop: 16,
+    marginTop: 10,
     color: '#fecaca',
     fontSize: 13,
   },
   footer: {
-    marginTop: 20,
+    marginTop: 12,
     textAlign: 'center',
     color: '#9ca3af',
-    fontSize: 12,
+    fontSize: 11,
   },
 });
 
