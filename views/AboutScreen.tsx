@@ -47,7 +47,7 @@ const AboutScreen: React.FC = () => {
             • React Native{'\n'}
             • React Navigation (stack navigation){'\n'}
             • TypeScript{'\n'}
-            • FreeCurrencyAPI for exchange rates
+            • FreeCurrencyAPI for exchange rates{'\n'}
             • Android Emulator
           </Text>
         </View>
